@@ -24,6 +24,7 @@ func (daemon *Daemon) ContainerCreate(name string, config *runconfig.Config, hos
 		return "", warnings, fmt.Errorf("The working directory '%s' is invalid. It needs to be an absolute path.", config.WorkingDir)
 	}
 
+
 	container, buildWarnings, err := daemon.Create(config, hostConfig, name)
 	if err != nil {
 		if daemon.Graph().IsNotExist(err, config.Image) {
@@ -34,6 +35,10 @@ func (daemon *Daemon) ContainerCreate(name string, config *runconfig.Config, hos
 			return "", warnings, fmt.Errorf("No such image: %s (tag: %s)", config.Image, tag)
 		}
 		return "", warnings, err
+	}
+
+	if daemon.Config().DisallowRoot && (config.User == "" || config.User == "root") {
+		return "", warnings, fmt.Errorf("Root disallowed")
 	}
 
 	container.LogEvent("create")
