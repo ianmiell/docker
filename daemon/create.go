@@ -39,6 +39,8 @@ func (daemon *Daemon) ContainerCreate(name string, config *runconfig.Config, hos
 	container.LogEvent("create")
 	warnings = append(warnings, buildWarnings...)
 
+	fmt.Println("HERE")
+
 	return container.ID, warnings, nil
 }
 
